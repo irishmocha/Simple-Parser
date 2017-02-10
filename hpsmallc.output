@@ -1,0 +1,675 @@
+Terminals which are not used
+
+   ELSE
+   SPACE
+   NG_OP
+   EQ_OP
+   ' '
+   exit_command
+   UPOS
+   UNEG
+   IFX
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: declarations statements
+
+    2 line: '\n'
+
+    3 declarations: /* empty */
+    4             | declarations declaration
+
+    5 declaration: declaretype ID declaration_finalizer line
+
+    6 declaration_finalizer: ';'
+    7                      | additional_declaration declaration_finalizer
+    8                      | array_declaration declaration_finalizer
+
+    9 additional_declaration: ',' ID
+
+   10 array_declaration: '[' INTVALUE ']'
+
+   11 declaretype: INT
+   12            | FLOAT
+
+   13 statements: /* empty */
+   14           | statements statement
+
+   15 statement: ';'
+   16          | assignment
+   17          | ifelse
+   18          | line
+
+   19 assignment: var '=' exp
+
+   20 var: ID
+   21    | ID '[' INTVALUE ']'
+
+   22 ifelse: IF '(' exp ')' '{' statements '}'
+
+   23 exp: factor
+   24    | exp '+' factor
+   25    | exp '-' factor
+
+   26 factor: term
+   27       | factor '*' term
+   28       | factor '/' term
+
+   29 term: NUMBER
+   30     | ID '[' NUMBER ']'
+
+   31 NUMBER: INTVALUE
+   32       | FLOATVALUE
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'\n' (10) 2
+' ' (32)
+'(' (40) 22
+')' (41) 22
+'*' (42) 27
+'+' (43) 24
+',' (44) 9
+'-' (45) 25
+'/' (47) 28
+';' (59) 6 15
+'=' (61) 19
+'[' (91) 10 21 30
+']' (93) 10 21 30
+'{' (123) 22
+'}' (125) 22
+error (256)
+INT (258) 11
+FLOAT (259) 12
+IF (260) 22
+ELSE (261)
+SPACE (262)
+NG_OP (263)
+EQ_OP (264)
+INTVALUE (265) 10 21 31
+FLOATVALUE (266) 32
+exit_command (267)
+ID (268) 5 9 20 21 30
+UPOS (269)
+UNEG (270)
+IFX (271)
+
+
+Nonterminals, with rules where they appear
+
+$accept (32)
+    on left: 0
+program (33)
+    on left: 1, on right: 0
+line (34)
+    on left: 2, on right: 5 18
+declarations (35)
+    on left: 3 4, on right: 1 4
+declaration (36)
+    on left: 5, on right: 4
+declaration_finalizer (37)
+    on left: 6 7 8, on right: 5 7 8
+additional_declaration (38)
+    on left: 9, on right: 7
+array_declaration (39)
+    on left: 10, on right: 8
+declaretype (40)
+    on left: 11 12, on right: 5
+statements (41)
+    on left: 13 14, on right: 1 14 22
+statement (42)
+    on left: 15 16 17 18, on right: 14
+assignment (43)
+    on left: 19, on right: 16
+var (44)
+    on left: 20 21, on right: 19
+ifelse (45)
+    on left: 22, on right: 17
+exp (46)
+    on left: 23 24 25, on right: 19 22 24 25
+factor (47)
+    on left: 26 27 28, on right: 23 24 25 27 28
+term (48)
+    on left: 29 30, on right: 26 27 28
+NUMBER (49)
+    on left: 31 32, on right: 29 30
+
+
+state 0
+
+    0 $accept: . program $end
+
+    $default  reduce using rule 3 (declarations)
+
+    program       go to state 1
+    declarations  go to state 2
+
+
+state 1
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 3
+
+
+state 2
+
+    1 program: declarations . statements
+    4 declarations: declarations . declaration
+
+    INT    shift, and go to state 4
+    FLOAT  shift, and go to state 5
+
+    $default  reduce using rule 13 (statements)
+
+    declaration  go to state 6
+    declaretype  go to state 7
+    statements   go to state 8
+
+
+state 3
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 4
+
+   11 declaretype: INT .
+
+    $default  reduce using rule 11 (declaretype)
+
+
+state 5
+
+   12 declaretype: FLOAT .
+
+    $default  reduce using rule 12 (declaretype)
+
+
+state 6
+
+    4 declarations: declarations declaration .
+
+    $default  reduce using rule 4 (declarations)
+
+
+state 7
+
+    5 declaration: declaretype . ID declaration_finalizer line
+
+    ID  shift, and go to state 9
+
+
+state 8
+
+    1 program: declarations statements .
+   14 statements: statements . statement
+
+    IF    shift, and go to state 10
+    ';'   shift, and go to state 11
+    '\n'  shift, and go to state 12
+    ID    shift, and go to state 13
+
+    $default  reduce using rule 1 (program)
+
+    line        go to state 14
+    statement   go to state 15
+    assignment  go to state 16
+    var         go to state 17
+    ifelse      go to state 18
+
+
+state 9
+
+    5 declaration: declaretype ID . declaration_finalizer line
+
+    '['  shift, and go to state 19
+    ';'  shift, and go to state 20
+    ','  shift, and go to state 21
+
+    declaration_finalizer   go to state 22
+    additional_declaration  go to state 23
+    array_declaration       go to state 24
+
+
+state 10
+
+   22 ifelse: IF . '(' exp ')' '{' statements '}'
+
+    '('  shift, and go to state 25
+
+
+state 11
+
+   15 statement: ';' .
+
+    $default  reduce using rule 15 (statement)
+
+
+state 12
+
+    2 line: '\n' .
+
+    $default  reduce using rule 2 (line)
+
+
+state 13
+
+   20 var: ID .
+   21    | ID . '[' INTVALUE ']'
+
+    '['  shift, and go to state 26
+
+    $default  reduce using rule 20 (var)
+
+
+state 14
+
+   18 statement: line .
+
+    $default  reduce using rule 18 (statement)
+
+
+state 15
+
+   14 statements: statements statement .
+
+    $default  reduce using rule 14 (statements)
+
+
+state 16
+
+   16 statement: assignment .
+
+    $default  reduce using rule 16 (statement)
+
+
+state 17
+
+   19 assignment: var . '=' exp
+
+    '='  shift, and go to state 27
+
+
+state 18
+
+   17 statement: ifelse .
+
+    $default  reduce using rule 17 (statement)
+
+
+state 19
+
+   10 array_declaration: '[' . INTVALUE ']'
+
+    INTVALUE  shift, and go to state 28
+
+
+state 20
+
+    6 declaration_finalizer: ';' .
+
+    $default  reduce using rule 6 (declaration_finalizer)
+
+
+state 21
+
+    9 additional_declaration: ',' . ID
+
+    ID  shift, and go to state 29
+
+
+state 22
+
+    5 declaration: declaretype ID declaration_finalizer . line
+
+    '\n'  shift, and go to state 12
+
+    line  go to state 30
+
+
+state 23
+
+    7 declaration_finalizer: additional_declaration . declaration_finalizer
+
+    '['  shift, and go to state 19
+    ';'  shift, and go to state 20
+    ','  shift, and go to state 21
+
+    declaration_finalizer   go to state 31
+    additional_declaration  go to state 23
+    array_declaration       go to state 24
+
+
+state 24
+
+    8 declaration_finalizer: array_declaration . declaration_finalizer
+
+    '['  shift, and go to state 19
+    ';'  shift, and go to state 20
+    ','  shift, and go to state 21
+
+    declaration_finalizer   go to state 32
+    additional_declaration  go to state 23
+    array_declaration       go to state 24
+
+
+state 25
+
+   22 ifelse: IF '(' . exp ')' '{' statements '}'
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    exp     go to state 36
+    factor  go to state 37
+    term    go to state 38
+    NUMBER  go to state 39
+
+
+state 26
+
+   21 var: ID '[' . INTVALUE ']'
+
+    INTVALUE  shift, and go to state 40
+
+
+state 27
+
+   19 assignment: var '=' . exp
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    exp     go to state 41
+    factor  go to state 37
+    term    go to state 38
+    NUMBER  go to state 39
+
+
+state 28
+
+   10 array_declaration: '[' INTVALUE . ']'
+
+    ']'  shift, and go to state 42
+
+
+state 29
+
+    9 additional_declaration: ',' ID .
+
+    $default  reduce using rule 9 (additional_declaration)
+
+
+state 30
+
+    5 declaration: declaretype ID declaration_finalizer line .
+
+    $default  reduce using rule 5 (declaration)
+
+
+state 31
+
+    7 declaration_finalizer: additional_declaration declaration_finalizer .
+
+    $default  reduce using rule 7 (declaration_finalizer)
+
+
+state 32
+
+    8 declaration_finalizer: array_declaration declaration_finalizer .
+
+    $default  reduce using rule 8 (declaration_finalizer)
+
+
+state 33
+
+   31 NUMBER: INTVALUE .
+
+    $default  reduce using rule 31 (NUMBER)
+
+
+state 34
+
+   32 NUMBER: FLOATVALUE .
+
+    $default  reduce using rule 32 (NUMBER)
+
+
+state 35
+
+   30 term: ID . '[' NUMBER ']'
+
+    '['  shift, and go to state 43
+
+
+state 36
+
+   22 ifelse: IF '(' exp . ')' '{' statements '}'
+   24 exp: exp . '+' factor
+   25    | exp . '-' factor
+
+    ')'  shift, and go to state 44
+    '-'  shift, and go to state 45
+    '+'  shift, and go to state 46
+
+
+state 37
+
+   23 exp: factor .
+   27 factor: factor . '*' term
+   28       | factor . '/' term
+
+    '*'  shift, and go to state 47
+    '/'  shift, and go to state 48
+
+    $default  reduce using rule 23 (exp)
+
+
+state 38
+
+   26 factor: term .
+
+    $default  reduce using rule 26 (factor)
+
+
+state 39
+
+   29 term: NUMBER .
+
+    $default  reduce using rule 29 (term)
+
+
+state 40
+
+   21 var: ID '[' INTVALUE . ']'
+
+    ']'  shift, and go to state 49
+
+
+state 41
+
+   19 assignment: var '=' exp .
+   24 exp: exp . '+' factor
+   25    | exp . '-' factor
+
+    '-'  shift, and go to state 45
+    '+'  shift, and go to state 46
+
+    $default  reduce using rule 19 (assignment)
+
+
+state 42
+
+   10 array_declaration: '[' INTVALUE ']' .
+
+    $default  reduce using rule 10 (array_declaration)
+
+
+state 43
+
+   30 term: ID '[' . NUMBER ']'
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+
+    NUMBER  go to state 50
+
+
+state 44
+
+   22 ifelse: IF '(' exp ')' . '{' statements '}'
+
+    '{'  shift, and go to state 51
+
+
+state 45
+
+   25 exp: exp '-' . factor
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    factor  go to state 52
+    term    go to state 38
+    NUMBER  go to state 39
+
+
+state 46
+
+   24 exp: exp '+' . factor
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    factor  go to state 53
+    term    go to state 38
+    NUMBER  go to state 39
+
+
+state 47
+
+   27 factor: factor '*' . term
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    term    go to state 54
+    NUMBER  go to state 39
+
+
+state 48
+
+   28 factor: factor '/' . term
+
+    INTVALUE    shift, and go to state 33
+    FLOATVALUE  shift, and go to state 34
+    ID          shift, and go to state 35
+
+    term    go to state 55
+    NUMBER  go to state 39
+
+
+state 49
+
+   21 var: ID '[' INTVALUE ']' .
+
+    $default  reduce using rule 21 (var)
+
+
+state 50
+
+   30 term: ID '[' NUMBER . ']'
+
+    ']'  shift, and go to state 56
+
+
+state 51
+
+   22 ifelse: IF '(' exp ')' '{' . statements '}'
+
+    $default  reduce using rule 13 (statements)
+
+    statements  go to state 57
+
+
+state 52
+
+   25 exp: exp '-' factor .
+   27 factor: factor . '*' term
+   28       | factor . '/' term
+
+    '*'  shift, and go to state 47
+    '/'  shift, and go to state 48
+
+    $default  reduce using rule 25 (exp)
+
+
+state 53
+
+   24 exp: exp '+' factor .
+   27 factor: factor . '*' term
+   28       | factor . '/' term
+
+    '*'  shift, and go to state 47
+    '/'  shift, and go to state 48
+
+    $default  reduce using rule 24 (exp)
+
+
+state 54
+
+   27 factor: factor '*' term .
+
+    $default  reduce using rule 27 (factor)
+
+
+state 55
+
+   28 factor: factor '/' term .
+
+    $default  reduce using rule 28 (factor)
+
+
+state 56
+
+   30 term: ID '[' NUMBER ']' .
+
+    $default  reduce using rule 30 (term)
+
+
+state 57
+
+   14 statements: statements . statement
+   22 ifelse: IF '(' exp ')' '{' statements . '}'
+
+    IF    shift, and go to state 10
+    '}'   shift, and go to state 58
+    ';'   shift, and go to state 11
+    '\n'  shift, and go to state 12
+    ID    shift, and go to state 13
+
+    line        go to state 14
+    statement   go to state 15
+    assignment  go to state 16
+    var         go to state 17
+    ifelse      go to state 18
+
+
+state 58
+
+   22 ifelse: IF '(' exp ')' '{' statements '}' .
+
+    $default  reduce using rule 22 (ifelse)
